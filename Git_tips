@@ -1,0 +1,15 @@
+init a repo:
+	git init
+	git add README.md
+	git commit -m "first commit"
+	git remote add origin git@github.com:xiangyuzhang/test_.git
+	git push -u origin master
+
+add change process:
+	git add <filename>   OR  git add .
+	git commit -m "msg"
+	git push -u origin master
+
+roll back:
+	git reset --hard 
+	git reflog
