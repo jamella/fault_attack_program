@@ -71,6 +71,7 @@ std::vector<std::string> Gate::build_gate(const Parser& parser)
 
 	inport_CB_value.resize(fanin);
 
+
 	for(unsigned i = 0; i != fanin; ++i)
 	{
 

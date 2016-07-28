@@ -80,7 +80,7 @@ void SAT_solver::solve(std::vector<unsigned>& freeze_variable)
 //void SAT_solver::solve()
 {
 	freeze(freeze_variable);
-	minisat.eliminate(true);
+	minisat.eliminate(false);
 	if(!minisat.okay())
 	{
 		result = "UNSAT";

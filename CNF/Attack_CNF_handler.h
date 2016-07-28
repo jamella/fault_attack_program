@@ -48,9 +48,13 @@ private:
 void Attack_CNF_handler::start_attack(Fault_parser& parser)
 {
 	process_inport_CB();
+	std::cerr << "Attack_CNF_handler: finish process_inport_CB" << std::endl;
 	learn_clause(parser);
+	std::cerr << "Attack_CNF_handler: finish learn_clause" << std::endl;
 	add_learnt_constrains(parser);
+	std::cerr << "Attack_CNF_handler: add_learnt_constrains" << std::endl;
 	connect_CB();
+	std::cerr << "Attack_CNF_handler: connect_CB" << std::endl;
 }
 
 
@@ -75,19 +79,19 @@ void Attack_CNF_handler::learn_clause(Fault_parser& trials)
 		round.fault_case = determine_case(round);
 		if(round.fault_case == SA_NOMATTER)
 		{
-//			std::cerr << "case = " << "no matter" << std::endl;
+			std::cerr << "case = " << "no matter" << std::endl;
 		}
 		else if(round.fault_case == SA_1)
 		{
-//			std::cerr<< "case = " << "SA_1" << std::endl;
+			std::cerr<< "case = " << "SA_1" << std::endl;
 		}
 		else if(round.fault_case == SA_0) 
 		{
-//			std::cerr << "case = " << "SA_0" << std::endl;
+			std::cerr << "case = " << "SA_0" << std::endl;
 		}
 		else if(round.fault_case == SA_ALLMATTER)
 		{
-//			std::cerr << "case = " << "SA_ALLMATTER" << std::endl;
+			std::cerr << "case = " << "SA_ALLMATTER" << std::endl;
 		}
 		else
 		{
@@ -148,6 +152,7 @@ unsigned Attack_CNF_handler::determine_case(const Trial& round) const
 
 std::vector<std::vector<std::string>> Attack_CNF_handler::make_S0_duplication(const Trial& round)
 {
+
 	auto dict_1 = get_current_varIndexDict(net_amount*duplication_amount);
 	auto dict_2 = get_current_varIndexDict(net_amount*(duplication_amount + 1));
 	// connect all the internal nets
@@ -172,36 +177,70 @@ std::vector<std::vector<std::string>> Attack_CNF_handler::make_S0_duplication(co
 	dup_2.push_back(assign(circuit.PI_list, round.input_vector, dict_2));
 	dup_2.push_back(assign(circuit.PO_list, round.output_vector_S0, dict_2));
 	duplication_amount += 2;
+	dup_1.at(0).insert(dup_1.at(0).begin(), "c this is dup_1 for S0\n");
 	return dup_1 + dup_2;
+//	return dup_1;
+
 }
 
 std::vector<std::vector<std::string>> Attack_CNF_handler::make_S1_duplication(const Trial& round)
 {
 	auto dict_1 = get_current_varIndexDict(net_amount*duplication_amount);
 	auto dict_2 = get_current_varIndexDict(net_amount*(duplication_amount + 1));
+/*	
+	vector<std::string> addition_assign_fault_site_1_in;
+	vector<std::string> addition_assign_fault_site_1_out;
+	vector<std::string> addition_assign_fault_site_2_in;
+	vector<std::string> addition_assign_fault_site_2_out;
+*/
 	// connect all the internal nets
 	auto connect_in_1 = connect_internal(round, dict_1);
 	auto connect_in_2 = connect_internal(round, dict_2);
 	// make first duplication and make constrains
 	auto dup_1 = duplicate_circuit(net_amount * duplication_amount);
+	dup_1.at(0).insert(dup_1.at(0).begin(), "c this is dup_1 for S1\n");
+
 	auto assign_fault_site_1_in = assign(dict_1.at(round.fault_site + "_in"),true);
 	auto assign_fault_site_1_out = assign(dict_1.at(round.fault_site + "_out"),false);
+/*
+	addition_assign_fault_site_1_in.push_back(assign_fault_site_1_in);
+	addition_assign_fault_site_1_out.push_back(assign_fault_site_1_out);	
+*/
+	connect_in_1.push_back("c this is assignment for S1\n");
+	connect_in_1.insert(connect_in_1.begin(), "c this is connecting internal\n");
 	connect_in_1.push_back(assign_fault_site_1_in);
 	connect_in_1.push_back(assign_fault_site_1_out);
 	dup_1.push_back(connect_in_1);
-	dup_1.push_back(assign(circuit.PI_list, round.input_vector, dict_1));
+/*
+	dup_1.push_back(addition_assign_fault_site_1_in);
+	dup_1.push_back(addition_assign_fault_site_1_out);
+*/
+ 	dup_1.push_back(assign(circuit.PI_list, round.input_vector, dict_1));
 	dup_1.push_back(assign(circuit.PO_list, round.output_vector_S1, dict_1));
 	// make another duplication and make constrains
 	auto dup_2 = duplicate_circuit(net_amount * (duplication_amount + 1));
 	auto assign_fault_site_2_in = assign(dict_2.at(round.fault_site + "_in"),false);
 	auto assign_fault_site_2_out = assign(dict_2.at(round.fault_site + "_out"),false);
+/*
+	addition_assign_fault_site_2_in.push_back(assign_fault_site_2_in);
+	addition_assign_fault_site_2_out.push_back(assign_fault_site_2_out);
+*/
 	connect_in_2.push_back(assign_fault_site_2_in);
 	connect_in_2.push_back(assign_fault_site_2_out);
 	dup_2.push_back(connect_in_2);
+/*
+	dup_2.push_back(addition_assign_fault_site_2_in);
+	dup_2.push_back(addition_assign_fault_site_2_out);
+*/
 	dup_2.push_back(assign(circuit.PI_list, round.input_vector, dict_2));
 	dup_2.push_back(assign(circuit.PO_list, round.output_vector_FF, dict_2));
 	duplication_amount += 2;
+	dup_2.at(0).insert(dup_2.at(0).begin(), "c this is dup_2 for S1\n");
+//	
+//	std::vector<std::vector<std::string>> dummy;
 	return dup_1 + dup_2;
+
+//	return dup_2;
 }
 
 std::vector<std::vector<std::string>> Attack_CNF_handler::make_FF_duplication(const Trial& round)
@@ -226,7 +265,9 @@ std::vector<std::vector<std::string>> Attack_CNF_handler::make_FF_duplication(co
 	dup_2.push_back(assign(circuit.PI_list, round.input_vector, dict_2));
 	dup_2.push_back(assign(circuit.PO_list, round.output_vector_FF, dict_2));
 	duplication_amount += 2;
+	dup_2.at(0).insert(dup_2.at(0).begin(), "c this is dup_1 for FF\n");
 	return dup_1 + dup_2;
+//	return dup_2;
 }
 
 std::vector<std::string> Attack_CNF_handler::connect_internal(const Trial& round, const std::map<std::string, unsigned>& dict)
@@ -237,6 +278,7 @@ std::vector<std::string> Attack_CNF_handler::connect_internal(const Trial& round
 		if(element  != round.fault_site + "_in")
 		{
 			strip_all(element, "_in");
+//			std::cerr << "Attack_CNF_handler::connect_internal " << element + "_in" << " " << element + "_out" << "(" + std::to_string(dict.at(element + "_in")) + " " + std::to_string(dict.at(element + "_out")) +  ")" <<std::endl;
 			result+=connect_nets(dict.at(element + "_in"), dict.at(element + "_out"));
 		}
 	}
@@ -255,6 +297,7 @@ std::map<std::string, unsigned> Attack_CNF_handler::get_current_varIndexDict(con
 
 void Attack_CNF_handler::connect_CB()
 {
+	std::cerr << "Attack_CNF_handler: " << "the duplication_amount = " << duplication_amount << std::endl;
 	for(unsigned index = 1; index <= duplication_amount; ++index)
 	{
 		for(auto &each_gate: circuit.CB_list)

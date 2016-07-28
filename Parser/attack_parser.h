@@ -12,7 +12,7 @@ public:
 	virtual void parse_circuit();
 
 
-private:
+
 	virtual void parse_PI(const std::string&);
 	virtual void parse_CB(const std::string&);
 	virtual void parse_internal_PI(const std::string&);
@@ -65,6 +65,7 @@ void Attack_parser::parse_internal_PI(const std::string& line)
 		indexVarDict.insert(std::pair<unsigned, std::string>(net_counter, net));
 		PI_internal_name_to_index.insert(std::pair<std::string, unsigned>(net, net_counter));
 		PI_internal_index_to_name.insert(std::pair<unsigned, std::string>(net_counter, net));
+		PIs.push_back(net);
 		++net_counter;
 	}		
 }
@@ -78,6 +79,7 @@ void Attack_parser::parse_CB(const std::string& line)
 		indexVarDict.insert(std::pair<unsigned, std::string>(net_counter, net));
 		CB_name_to_index.insert(std::pair<std::string, unsigned>(net, net_counter));
 		CB_index_to_name.insert(std::pair<unsigned, std::string>(net_counter, net));
+		CBs.push_back(net);
 		++net_counter;
 	}
 	
@@ -92,6 +94,7 @@ void Attack_parser::parse_internal_PO(const std::string& line)
 		indexVarDict.insert(std::pair<unsigned, std::string>(net_counter, net));
 		PO_internal_name_to_index.insert(std::pair<std::string, unsigned>(net, net_counter));
 		PO_internal_index_to_name.insert(std::pair<unsigned, std::string>(net_counter, net));
+		POs.push_back(net);
 		++net_counter;
 	}
 }

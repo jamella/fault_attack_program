@@ -78,6 +78,7 @@ void Parse_result::assign_gate(int gate_index, std::string type, int index, int 
 	if(type == "body")
 	{
 		gate.body_CB_value.push_back(value);
+
 	}
 	else if(type.find("fanin") != std::string::npos)
 	{

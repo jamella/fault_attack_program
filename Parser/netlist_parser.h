@@ -25,7 +25,7 @@ public:
 
 	virtual void parse();
 
-protected:
+
 	std::vector<std::string> find_netname(std::string gate);
 	std::string find_gatetype(std::string line);
 	std::vector<std::string> split_wire_info(std::string line, const std::string& line_type);
@@ -40,13 +40,17 @@ protected:
 	std::map<unsigned, std::string> PI_index_to_name;
 	std::map<unsigned, std::string> PO_index_to_name;
 	std::map<unsigned, std::string> CB_index_to_name;
-public:
+
 	std::map<unsigned, std::string> wire_index_to_name;
 	std::map<unsigned, std::string> indexVarDict;
 
 	std::vector<std::vector<std::string>> CNF;
 	std::vector<std::string> Vline;
 	std::map<std::string, int> gateTypeDict;
+
+	std::vector<std::string> PIs;
+	std::vector<std::string> CBs;
+	std::vector<std::string> POs;
 
 private:
 	unsigned net_counter;
